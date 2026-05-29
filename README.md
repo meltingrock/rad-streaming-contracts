@@ -21,6 +21,13 @@ tag of this repo.
   supports it.
 - **patch** — docs/fixtures only; no wire change.
 
+The conformance validator (`validate_plan`) checks a plan's **structure** (schema +
+invariants) and enforces the `uuid` / `date-time` formats. It does **not** gate the
+`major`/`minor` *acceptance* described above — that version-range decision is
+consumer-side logic (the worker accepting `minor <=` its built-against version), not a
+property of the plan itself, so there is intentionally no "unknown-major" rejection
+fixture.
+
 ## Consuming this contract
 
 Pin a tagged version (git submodule or dependency). Validate every plan:

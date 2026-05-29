@@ -6,5 +6,7 @@
   "hard-without-offset.json":{ "stage": "schema",    "expect": "start_offset_ms" },
   "soft-with-offset.json":   { "stage": "schema",    "expect": "start_offset_ms" },
   "offset-out-of-range.json":{ "stage": "schema",    "expect": "3599999" },
-  "unknown-field.json":      { "stage": "schema",    "expect": "surprise" }
+  "unknown-field.json":      { "stage": "schema",    "expect": "surprise" },
+  "bad-uuid.json":           { "stage": "schema",    "expect": "store_id" },
+  "bad-timestamp.json":      { "stage": "schema",    "expect": "hour_bucket" }
 }
