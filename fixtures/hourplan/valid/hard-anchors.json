@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "store_id": "f1e2d3c4-0000-4000-8000-000000000001",
+  "hour_bucket": "2026-05-29T14:00:00Z",
+  "timezone": "Africa/Johannesburg",
+  "format_clock_id": "ab120000-0000-4000-8000-000000000002",
+  "format_clock_version": 3,
+  "schedule_revision": "sha256:abc",
+  "compiled_at": "2026-05-29T13:42:01Z",
+  "total_duration_ms": 3620400,
+  "items": [
+    { "seq": 0, "family": "jingle", "media_id": "11110000-0000-4000-8000-00000000000a",
+      "uri": "s3://rr-media/jingles/top.mp3", "duration_ms": 7400, "timing_rule": "hard", "start_offset_ms": 0 },
+    { "seq": 1, "family": "music", "media_id": "11110000-0000-4000-8000-00000000000b",
+      "uri": "s3://rr-media/tracks/abc.mp3", "duration_ms": 1800000, "timing_rule": "soft", "start_offset_ms": null },
+    { "seq": 2, "family": "advert", "media_id": "11110000-0000-4000-8000-00000000000c",
+      "uri": "s3://rr-media/ads/xyz.mp3", "duration_ms": 13000, "timing_rule": "hard", "start_offset_ms": 900000 },
+    { "seq": 3, "family": "music", "media_id": "11110000-0000-4000-8000-00000000000d",
+      "uri": "s3://rr-media/tracks/def.mp3", "duration_ms": 1800000, "timing_rule": "soft", "start_offset_ms": null }
+  ]
+}
