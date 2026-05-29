@@ -23,7 +23,7 @@ def validate_plan(plan: dict[str, Any]) -> list[str]:
     Stage 1: JSON Schema (structure). Stage 2: cross-item invariants (only if
     stage 1 passed, since invariants assume a well-formed structure)."""
     schema_errors = [
-        f"schema: {e.message} at {'/'.join(str(p) for p in e.absolute_path) or '<root>'}"
+        f"schema[{e.validator}]: {e.message} at {'/'.join(str(p) for p in e.absolute_path) or '<root>'}"
         for e in sorted(_validator().iter_errors(plan), key=lambda e: list(e.absolute_path))
     ]
     if schema_errors:
