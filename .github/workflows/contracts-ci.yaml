@@ -1,0 +1,30 @@
+name: contracts-ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: conformance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Schema is a valid Draft 2020-12 schema
+        run: python -c "import json, jsonschema; jsonschema.Draft202012Validator.check_schema(json.load(open('../schemas/hourplan.schema.json'))); print('schema OK')"
+      - name: Generate models (codegen must succeed)
+        run: ../codegen/generate_pydantic.sh
+      - name: Ruff
+        run: ruff check src tests
+      - name: Mypy
+        run: mypy src
+      - name: Conformance suite
+        run: pytest -v
