@@ -1,0 +1,6 @@
+{
+  "event_id": "44444444-4444-4444-8444-444444444444",
+  "event_type": "streams.device.connected",
+  "timestamp": "2026-05-30T10:30:00Z",
+  "payload": { "store_id": "not-a-uuid", "device_id": "b2b2b2b2-2222-4222-8222-222222222222", "occurred_at": "2026-05-30T10:29:58Z" }
+}

@@ -1,0 +1,11 @@
+{
+  "event_id": "33333333-3333-4333-8333-333333333333",
+  "event_type": "streams.device.disconnected",
+  "timestamp": "2026-05-30T10:35:00Z",
+  "payload": {
+    "store_id": "a1a1a1a1-1111-4111-8111-111111111111",
+    "device_id": "b2b2b2b2-2222-4222-8222-222222222222",
+    "occurred_at": "2026-05-30T10:34:59Z",
+    "reason": "timeout"
+  }
+}
