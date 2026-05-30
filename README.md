@@ -59,3 +59,18 @@ consumer should run their validator against this suite so all sides agree.
 
 Edit schema → bump semver → update fixtures → consumers update their pin
 deliberately. No silent drift.
+
+## Releasing a new contract version
+
+This package is consumed via a `git+https` **tag pin** (no package index). To cut a release:
+
+1. Bump `version` in `conformance/pyproject.toml` (keep it equal to the git tag you will create).
+2. Commit on `master`.
+3. Create an annotated tag: `git tag -a vX.Y.Z -m "hourplan-conformance vX.Y.Z"` and push: `git push origin master vX.Y.Z`.
+4. Bump the pin in each consumer's `pyproject.toml` to `@vX.Y.Z`.
+
+The **git tag is the source of truth** for what consumers fetch; pip checks out the tag and does not verify the declared version, so always keep `version` == the tag.
+
+Consumers pin:
+
+    hourplan-conformance @ git+https://github.com/meltingrock/rr-streaming-contracts.git@vX.Y.Z#subdirectory=conformance
