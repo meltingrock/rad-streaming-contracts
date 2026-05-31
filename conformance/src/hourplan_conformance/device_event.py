@@ -1,11 +1,11 @@
 import json
 from functools import lru_cache
-from pathlib import Path
+from importlib.resources import files
 from typing import Any
 
 from jsonschema import Draft202012Validator
 
-_SCHEMA_PATH = Path(__file__).resolve().parents[3] / "schemas" / "device-event.schema.json"
+_SCHEMA_PATH = files("hourplan_conformance") / "schemas" / "device-event.schema.json"
 
 
 @lru_cache(maxsize=1)

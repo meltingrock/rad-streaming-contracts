@@ -5,3 +5,4 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 conformance/src/hourplan_conformance/models_generated.py
+dist/
