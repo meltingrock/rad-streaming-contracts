@@ -1,4 +1,4 @@
-# rr-streaming-contracts
+# rad-streaming-contracts
 
 Canonical, versioned contracts for the per-store streaming platform. Currently:
 the **HourPlan** — the data contract between the Playout Compiler (sub-project A)
@@ -73,4 +73,4 @@ The **git tag is the source of truth** for what consumers fetch; pip checks out 
 
 Consumers pin:
 
-    hourplan-conformance @ git+https://github.com/meltingrock/rr-streaming-contracts.git@vX.Y.Z#subdirectory=conformance
+    hourplan-conformance @ git+https://github.com/meltingrock/rad-streaming-contracts.git@vX.Y.Z#subdirectory=conformance
