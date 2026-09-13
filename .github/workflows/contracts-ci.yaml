@@ -21,8 +21,8 @@ jobs:
       - name: Verify wheel bundles schemas
         working-directory: conformance
         run: pip install build && bash scripts/verify_wheel.sh
-      - name: Schema is a valid Draft 2020-12 schema
-        run: python -c "import json, jsonschema; jsonschema.Draft202012Validator.check_schema(json.load(open('src/hourplan_conformance/schemas/hourplan.schema.json'))); print('schema OK')"
+      - name: Schemas are valid Draft 2020-12 schemas
+        run: python -c "import glob, json, jsonschema; [jsonschema.Draft202012Validator.check_schema(json.load(open(f))) or print(f, 'OK') for f in sorted(glob.glob('src/hourplan_conformance/schemas/*.schema.json'))]"
       - name: Generate models (codegen must succeed)
         run: ../codegen/generate_pydantic.sh
       - name: Ruff

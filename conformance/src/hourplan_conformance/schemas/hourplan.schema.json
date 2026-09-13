@@ -30,6 +30,16 @@
     }
   },
   "$defs": {
+    "scheduleRef": {
+      "$comment": "Nullable: required/properties only constrain objects, so null passes and a malformed object reports the exact field.",
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["id", "code"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "code": { "type": "string", "pattern": "^[A-Z]+-[0-9]+$" }
+      }
+    },
     "planItem": {
       "type": "object",
       "additionalProperties": false,
@@ -41,7 +51,11 @@
         "uri": { "type": "string", "pattern": "^s3://" },
         "duration_ms": { "type": "integer", "minimum": 1 },
         "timing_rule": { "enum": ["soft", "hard"] },
-        "start_offset_ms": { "type": ["integer", "null"], "minimum": 0, "maximum": 3599999 }
+        "start_offset_ms": { "type": ["integer", "null"], "minimum": 0, "maximum": 3599999 },
+        "schedule": {
+          "$comment": "Added in 1.3.0. The placing schedule: the PRC-/MESC- schedule whose table slot put this item into the plan. Optional and nullable; soft items carry null. No invariant requires it on hard items.",
+          "$ref": "#/$defs/scheduleRef"
+        }
       },
       "allOf": [
         {

@@ -14,9 +14,11 @@ cd /tmp
 python -c "
 from hourplan_conformance.validate import validate_plan
 from hourplan_conformance.device_event import validate_device_event
+from hourplan_conformance.channel_event import validate_channel_event
 assert isinstance(validate_plan({}), list)
 assert isinstance(validate_device_event({}), list)
-print('wheel ships schemas: validate_plan + validate_device_event callable')
+assert isinstance(validate_channel_event({}), list)
+print('wheel ships schemas: validate_plan + validate_device_event + validate_channel_event callable')
 "
 deactivate
 rm -rf /tmp/wheelcheck
