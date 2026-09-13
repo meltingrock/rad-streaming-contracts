@@ -1,0 +1,11 @@
+{
+  "event_id": "e0e0e0e0-0000-5000-8000-000000000015",
+  "event_type": "playout.channel.went_silent",
+  "timestamp": "2026-09-21T13:15:02.105Z",
+  "payload": {
+    "store_id": "f1e2d3c4-0000-4000-8000-000000000001",
+    "channel_instance_id": "c0c0c0c0-0000-4000-8000-000000000001",
+    "seq": 15,
+    "occurred_at": "2026-09-21T13:20:00.500Z"
+  }
+}

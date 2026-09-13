@@ -1,12 +1,50 @@
 {
-  "empty-items.json":        { "stage": "schema",    "expect": "minItems" },
-  "seq-gap.json":            { "stage": "invariant", "expect": "I1" },
-  "non-monotonic-hard.json": { "stage": "invariant", "expect": "I2" },
-  "total-mismatch.json":     { "stage": "invariant", "expect": "I3" },
-  "hard-without-offset.json":{ "stage": "schema",    "expect": "start_offset_ms" },
-  "soft-with-offset.json":   { "stage": "schema",    "expect": "start_offset_ms" },
-  "offset-out-of-range.json":{ "stage": "schema",    "expect": "3599999" },
-  "unknown-field.json":      { "stage": "schema",    "expect": "surprise" },
-  "bad-uuid.json":           { "stage": "schema",    "expect": "store_id" },
-  "bad-timestamp.json":      { "stage": "schema",    "expect": "hour_bucket" }
+  "empty-items.json": {
+    "stage": "schema",
+    "expect": "minItems"
+  },
+  "seq-gap.json": {
+    "stage": "invariant",
+    "expect": "I1"
+  },
+  "non-monotonic-hard.json": {
+    "stage": "invariant",
+    "expect": "I2"
+  },
+  "total-mismatch.json": {
+    "stage": "invariant",
+    "expect": "I3"
+  },
+  "hard-without-offset.json": {
+    "stage": "schema",
+    "expect": "start_offset_ms"
+  },
+  "soft-with-offset.json": {
+    "stage": "schema",
+    "expect": "start_offset_ms"
+  },
+  "offset-out-of-range.json": {
+    "stage": "schema",
+    "expect": "3599999"
+  },
+  "unknown-field.json": {
+    "stage": "schema",
+    "expect": "surprise"
+  },
+  "bad-uuid.json": {
+    "stage": "schema",
+    "expect": "store_id"
+  },
+  "bad-timestamp.json": {
+    "stage": "schema",
+    "expect": "hour_bucket"
+  },
+  "schedule-missing-code.json": {
+    "stage": "schema",
+    "expect": "'code' is a required property"
+  },
+  "schedule-bad-id.json": {
+    "stage": "schema",
+    "expect": "schedule/id"
+  }
 }
