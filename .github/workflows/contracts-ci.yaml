@@ -3,7 +3,11 @@ name: contracts-ci
 on:
   pull_request:
   push:
-    branches: [main]
+    # develop is this repo's default branch and where every merge lands; the old list named
+    # main, which does not exist here, so nothing ever ran on a merge. staging is included
+    # because a release goes through it and the contracts are what the player and the
+    # compiler agree on -- a broken one there is worth knowing about before production.
+    branches: [develop, staging]
 
 jobs:
   validate-and-test:
