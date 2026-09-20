@@ -1,3 +1,4 @@
+import itertools
 from typing import Any
 
 _HOUR_MS = 3_600_000
@@ -50,7 +51,7 @@ def check_invariants(plan: dict[str, Any]) -> list[str]:
         (i for i in items if i["timing_rule"] == "hard"),
         key=lambda i: i["start_offset_ms"],
     )
-    for earlier, later in zip(hard, hard[1:]):
+    for earlier, later in itertools.pairwise(hard):
         ends = earlier["start_offset_ms"] + earlier["duration_ms"]
         if ends > later["start_offset_ms"]:
             errors.append(
