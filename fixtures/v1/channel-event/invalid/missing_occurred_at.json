@@ -1,0 +1,28 @@
+{
+  "event_id": "e0e0e0e0-0000-5000-8000-000000000012",
+  "event_type": "playout.channel.ended",
+  "timestamp": "2026-09-21T13:15:02.105Z",
+  "payload": {
+    "store_id": "f1e2d3c4-0000-4000-8000-000000000001",
+    "channel_instance_id": "c0c0c0c0-0000-4000-8000-000000000001",
+    "seq": 12,
+    "rid": 42,
+    "elapsed_ms": 13000,
+    "item": {
+      "media_id": "11110000-0000-4000-8000-00000000000c",
+      "seq": 2,
+      "family": "advert",
+      "hour_bucket": "2026-09-21T13:00:00Z",
+      "schedule_revision": "sha256:abc",
+      "format_clock_version": 3,
+      "timezone": "Africa/Johannesburg",
+      "duration_ms": 13000,
+      "timing_rule": "hard",
+      "start_offset_ms": 900000,
+      "schedule": {
+        "id": "5c4e0000-0000-4000-8000-000000000102",
+        "code": "PRC-00013"
+      }
+    }
+  }
+}

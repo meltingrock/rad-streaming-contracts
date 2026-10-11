@@ -1,12 +1,7 @@
-import json
 from datetime import datetime
-from functools import lru_cache
-from importlib.resources import files
 from typing import Any
 
-from jsonschema import Draft202012Validator
-
-_SCHEMA_PATH = files("hourplan_conformance") / "schemas" / "channel-event.schema.json"
+from hourplan_conformance._schemas import schema_errors
 
 EVENT_TYPES = (
     "playout.channel.started",
@@ -16,13 +11,6 @@ EVENT_TYPES = (
     "playout.channel.went_silent",
     "playout.channel.gap",
 )
-
-
-@lru_cache(maxsize=1)
-def _validator() -> Draft202012Validator:
-    schema = json.loads(_SCHEMA_PATH.read_text())
-    Draft202012Validator.check_schema(schema)
-    return Draft202012Validator(schema, format_checker=Draft202012Validator.FORMAT_CHECKER)
 
 
 def _check_invariants(event: dict[str, Any]) -> list[str]:
@@ -53,10 +41,9 @@ def validate_channel_event(event: dict[str, Any]) -> list[str]:
 
     Stage 1: the shared channel-event JSON Schema. Stage 2: invariants, only if
     stage 1 passed."""
-    schema_errors = [
-        f"schema[{e.validator}]: {e.message} at {'/'.join(str(p) for p in e.absolute_path) or '<root>'}"
-        for e in sorted(_validator().iter_errors(event), key=lambda e: list(e.absolute_path))
-    ]
-    if schema_errors:
-        return schema_errors
+    if not isinstance(event, dict):
+        return [f"schema[type]: event must be an object, got {type(event).__name__} at <root>"]
+    errors = schema_errors("v1/channel-event.schema.json", event)
+    if errors:
+        return errors
     return _check_invariants(event)
