@@ -1,12 +1,7 @@
-import json
 from datetime import datetime
-from functools import lru_cache
-from importlib.resources import files
 from typing import Any
 
-from jsonschema import Draft202012Validator
-
-_SCHEMA_PATH = files("hourplan_conformance") / "schemas" / "channel-event.schema.json"
+from hourplan_conformance._schemas import major_of, schema_errors
 
 EVENT_TYPES = (
     "playout.channel.started",
@@ -17,12 +12,13 @@ EVENT_TYPES = (
     "playout.channel.gap",
 )
 
-
-@lru_cache(maxsize=1)
-def _validator() -> Draft202012Validator:
-    schema = json.loads(_SCHEMA_PATH.read_text())
-    Draft202012Validator.check_schema(schema)
-    return Draft202012Validator(schema, format_checker=Draft202012Validator.FORMAT_CHECKER)
+# Which schema reads an event, by the major of its envelope `schema_version`. Events carried
+# no version before 2.0, so an event without one is a 1.x event; a 2.0 producer must send it.
+# 1.x events stay readable: the as-run log is assembled from them for years.
+SCHEMA_BY_MAJOR = {
+    1: "v1/channel-event.schema.json",
+    2: "channel-event.schema.json",
+}
 
 
 def _check_invariants(event: dict[str, Any]) -> list[str]:
@@ -51,12 +47,27 @@ def _check_invariants(event: dict[str, Any]) -> list[str]:
 def validate_channel_event(event: dict[str, Any]) -> list[str]:
     """Return a list of error messages; empty list means the event is valid.
 
-    Stage 1: the shared channel-event JSON Schema. Stage 2: invariants, only if
-    stage 1 passed."""
-    schema_errors = [
-        f"schema[{e.validator}]: {e.message} at {'/'.join(str(p) for p in e.absolute_path) or '<root>'}"
-        for e in sorted(_validator().iter_errors(event), key=lambda e: list(e.absolute_path))
-    ]
-    if schema_errors:
-        return schema_errors
+    Stage 0: the envelope `schema_version` picks the schema (absent means 1.x). Stage 1:
+    the shared channel-event JSON Schema. Stage 2: invariants, only if stage 1 passed."""
+    if not isinstance(event, dict):
+        return [f"schema[type]: event must be an object, got {type(event).__name__} at <root>"]
+    if "schema_version" not in event:
+        major = 1
+    else:
+        version = event["schema_version"]
+        found = major_of(version)
+        if found is None:
+            return [f"schema_version: {version!r} is not 'major.minor' at schema_version"]
+        # 1.x events never carry schema_version, so a present one must name a later major.
+        if found == 1 or found not in SCHEMA_BY_MAJOR:
+            message = (
+                f"schema_version: unsupported schema_version major {found} in {version!r} "
+                f"(an event without schema_version is 1.x; this package reads "
+                f"{sorted(m for m in SCHEMA_BY_MAJOR if m > 1)} when present) at schema_version"
+            )
+            return [message]
+        major = found
+    errors = schema_errors(SCHEMA_BY_MAJOR[major], event)
+    if errors:
+        return errors
     return _check_invariants(event)

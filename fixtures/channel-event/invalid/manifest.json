@@ -34,5 +34,17 @@
   },
   "gap_time_span_reversed.json": {
     "expect": "C2"
+  },
+  "unlisted_family.json": {
+    "expect": "'prerec' is not one of"
+  },
+  "family_source_not_other.json": {
+    "expect": "'other' was expected"
+  },
+  "unknown_major.json": {
+    "expect": "unsupported schema_version major 3"
+  },
+  "v1_major_marked.json": {
+    "expect": "unsupported schema_version major 1"
   }
 }

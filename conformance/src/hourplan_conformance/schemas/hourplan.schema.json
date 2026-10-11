@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://contracts.radioretail.co.za/hourplan/1.0/hourplan.schema.json",
+  "$id": "https://contracts.radioretail.co.za/hourplan/2.0/hourplan.schema.json",
   "title": "HourPlan",
   "type": "object",
   "additionalProperties": false,
@@ -12,8 +12,8 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+$",
-      "$comment": "major.minor only — patch bumps are docs/fixtures with no wire change, so plans never carry a patch component."
+      "pattern": "^2\\.[0-9]+$",
+      "$comment": "major.minor only — patch bumps are docs/fixtures with no wire change, so plans never carry a patch component. This schema reads major 2; 1.x plans are read by schemas/v1/hourplan.schema.json, chosen by the validator from this field."
     },
     "store_id": { "type": "string", "format": "uuid" },
     "hour_bucket": { "type": "string", "format": "date-time" },
@@ -30,6 +30,22 @@
     }
   },
   "$defs": {
+    "family": {
+      "$comment": "Added in 2.0.0. The content kind of an aired item, never how it was placed (docs/adr/0001-family-is-content-kind.md). Closed: the one list for the HourPlan item and the channel-event item, which refers here. Adding a value is a minor release, removing one is major.",
+      "enum": [
+        "music", "advert", "announcement", "special", "promo", "news", "weather", "traffic",
+        "station_id", "sweeper", "presenter_link", "psa", "feature", "sponsorship_bumper", "other"
+      ]
+    },
+    "familySource": {
+      "$comment": "Added in 2.0.0. The source value the compiler could not map, kept when it falls back to family other. Present only when family is other.",
+      "type": "string",
+      "minLength": 1
+    },
+    "familySourceOnlyWithOther": {
+      "if": { "required": ["family_source"] },
+      "then": { "properties": { "family": { "const": "other" } } }
+    },
     "scheduleRef": {
       "$comment": "Nullable: required/properties only constrain objects, so null passes and a malformed object reports the exact field.",
       "type": ["object", "null"],
@@ -46,7 +62,8 @@
       "required": ["seq", "family", "media_id", "uri", "duration_ms", "timing_rule"],
       "properties": {
         "seq": { "type": "integer", "minimum": 0 },
-        "family": { "type": "string", "minLength": 1 },
+        "family": { "$ref": "#/$defs/family" },
+        "family_source": { "$ref": "#/$defs/familySource" },
         "media_id": { "type": "string", "format": "uuid" },
         "uri": { "type": "string", "pattern": "^s3://" },
         "duration_ms": { "type": "integer", "minimum": 1 },
@@ -58,6 +75,7 @@
         }
       },
       "allOf": [
+        { "$ref": "#/$defs/familySourceOnlyWithOther" },
         {
           "if": { "properties": { "timing_rule": { "const": "hard" } } },
           "then": {

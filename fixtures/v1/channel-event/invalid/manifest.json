@@ -1,0 +1,38 @@
+{
+  "missing_seq.json": {
+    "expect": "'seq' is a required property"
+  },
+  "missing_occurred_at.json": {
+    "expect": "'occurred_at' is a required property"
+  },
+  "gap_without_time_span.json": {
+    "expect": "'dropped_from_at' is a required property"
+  },
+  "unknown_kind.json": {
+    "expect": "event_type"
+  },
+  "schedule_missing_code.json": {
+    "expect": "'code' is a required property"
+  },
+  "started_without_item.json": {
+    "expect": "'item' is a required property"
+  },
+  "ended_without_elapsed.json": {
+    "expect": "'elapsed_ms' is a required property"
+  },
+  "went_silent_with_item.json": {
+    "expect": "should not be valid"
+  },
+  "extra_payload_field.json": {
+    "expect": "surprise"
+  },
+  "bad_channel_instance_id.json": {
+    "expect": "channel_instance_id"
+  },
+  "gap_seq_range_reversed.json": {
+    "expect": "C1"
+  },
+  "gap_time_span_reversed.json": {
+    "expect": "C2"
+  }
+}
