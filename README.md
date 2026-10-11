@@ -26,11 +26,12 @@ tag of this repo.
 - **patch** — docs/fixtures only; no wire change.
 
 The conformance validator (`validate_plan`) checks a plan's **structure** (schema +
-invariants) and enforces the `uuid` / `date-time` formats. It does **not** gate the
-`major`/`minor` *acceptance* described above — that version-range decision is
-consumer-side logic (the worker accepting `minor <=` its built-against version), not a
-property of the plan itself, so there is intentionally no "unknown-major" rejection
-fixture.
+invariants) and enforces the `uuid` / `date-time` formats. Since 2.0.0 it picks the schema
+by the **major** of `schema_version`: `1.x` is read by the frozen 1.3.0 schema
+(`schemas/v1/`), `2.x` by the current one, and any other major is one
+`unsupported schema_version major` error. It does **not** gate the `minor` *acceptance*
+described above; that is consumer-side logic (the worker accepting `minor <=` its
+built-against version).
 
 ## Consuming this contract
 
@@ -56,7 +57,8 @@ pip install -e ".[dev]"
 pytest -v
 ```
 
-Fixtures live in `fixtures/{hourplan,device-event,channel-event}/{valid,invalid}/`. Both
+Fixtures live in `fixtures/{hourplan,device-event,channel-event}/{valid,invalid}/` (current
+major) and `fixtures/v1/{hourplan,channel-event}/` (the 1.3.0 suite, frozen). Both
 this repo and each consumer should run their validator against this suite so all sides agree.
 
 ## Channel events
@@ -75,6 +77,28 @@ dedupe on. `payload.occurred_at` is when the channel recorded the fact; the enve
 range and the dropped events' time span. Invariants beyond the schema: C1 (a gap's
 `last_seq >= first_seq`) and C2 (`dropped_to_at >= dropped_from_at`).
 
+Since 2.0 the envelope carries `schema_version` (`major.minor`, required from 2.0). An event
+without it is a 1.x event and is read by the v1 schema; a present `1.x` is an error, since
+1.x producers never sent it.
+
+## Family
+
+`family` is the content kind of an aired item (docs/adr/0001-family-is-content-kind.md), one
+closed list for HourPlan items and channel-event items, defined once as `$defs/family` in
+`hourplan.schema.json`:
+
+`music, advert, announcement, special, promo, news, weather, traffic, station_id, sweeper,
+presenter_link, psa, feature, sponsorship_bumper, other`
+
+An item may carry `family_source` (non-empty string) only when `family` is `other`: the source
+value the compiler could not map. Consumers that keep their own list assert it against the
+package so drift fails a test:
+
+```python
+from hourplan_conformance import FAMILIES   # tuple, schema order, current major
+assert set(SegmentFamily) == set(FAMILIES)
+```
+
 ## 1.3.0 rollout order
 
 1.3.0 adds an optional, nullable `schedule: {id, code}` to HourPlan items (the placing
@@ -84,6 +108,21 @@ schedule; soft items carry null) and the channel-event contract.
    items carry `schedule` (`additionalProperties: false`).
 2. Only then may the compiler emit `schedule`.
 3. The as-run consumer and the worker's sidecar pin 1.3.0 to validate channel events.
+
+## 2.0.0 rollout order
+
+2.0.0 closes `family` (no `jingle`, no `prerec`; `PRC-` items carry `advert`), adds
+`family_source`, sets HourPlan `schema_version` to `2.0` and adds `schema_version` to the
+channel-event envelope. The package reads both majors.
+
+1. Every reader moves to 2.0.0 **first**: the stream worker's player and sidecar, and the
+   rad-api-schedules as-run consumer. 2.0.0 still accepts 1.x plans and events, so nothing
+   changes on the wire yet.
+2. Only then does the compiler emit `2.0` plans, and the player `2.0` channel events.
+3. Once no 1.x plan can be in flight, the v1 schemas stay only to read old as-run data.
+
+Adding a family later is a minor release (consumers before the compiler); removing one is
+major.
 
 ## Change process
 
