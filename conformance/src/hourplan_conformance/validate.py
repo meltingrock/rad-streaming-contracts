@@ -7,6 +7,7 @@ from hourplan_conformance.invariants import check_invariants
 # after 2.0.0: they are in flight until the compiler emits 2.0, and as-run data outlives them.
 SCHEMA_BY_MAJOR = {
     1: "v1/hourplan.schema.json",
+    2: "hourplan.schema.json",
 }
 
 

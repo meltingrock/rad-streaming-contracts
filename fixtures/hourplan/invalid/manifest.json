@@ -46,5 +46,25 @@
   "schedule-bad-id.json": {
     "stage": "schema",
     "expect": "schedule/id"
+  },
+  "family-prerec.json": {
+    "stage": "schema",
+    "expect": "'prerec' is not one of"
+  },
+  "family-jingle.json": {
+    "stage": "schema",
+    "expect": "'jingle' is not one of"
+  },
+  "family-source-not-other.json": {
+    "stage": "schema",
+    "expect": "'other' was expected"
+  },
+  "family-source-empty.json": {
+    "stage": "schema",
+    "expect": "family_source"
+  },
+  "unknown-major.json": {
+    "stage": "version",
+    "expect": "unsupported schema_version major 3"
   }
 }
