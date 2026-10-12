@@ -1,0 +1,21 @@
+{
+  "record_type": "gap",
+  "schema_version": "1.0",
+  "store": {
+    "id": "a8bbc136-0000-4000-8000-000000000001"
+  },
+  "run": {
+    "channel_instance_id": "c0ffee00-0000-4000-8000-000000000004"
+  },
+  "first_seq": 40,
+  "last_seq": 52,
+  "dropped_count": 13,
+  "occurred_at": "2026-10-11T09:12:00.500Z",
+  "dropped_from_at": "2026-10-11T09:01:10.000Z",
+  "dropped_to_at": "2026-10-11T09:11:58.250Z",
+  "item": {
+    "media_id": "ddba5aa2-99ab-4513-9d2a-832e84bf5492",
+    "family": "music",
+    "snapshot": "pending"
+  }
+}
