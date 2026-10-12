@@ -1,0 +1,36 @@
+{
+  "record_type": "header",
+  "schema_version": "1.0",
+  "export_id": "5c0fbec3-d6e7-48f9-a30a-4b1c26d7e859",
+  "generated_at": "2026-10-12T06:00:01.250Z",
+  "service": "Radio Retail in-store radio",
+  "filters": {
+    "store_ids": [
+      "a8bbc136-0000-4000-8000-000000000001"
+    ],
+    "client_ids": [
+      "4d0bfbf2-0000-4000-8000-000000000002"
+    ],
+    "schedule_codes": [
+      "SCH-00881"
+    ],
+    "families": [
+      "music",
+      "advert"
+    ]
+  },
+  "range": {
+    "from": "2026-07-01T00:00:00.000Z",
+    "to": "2026-10-01T00:00:00.000Z"
+  },
+  "archived_months": [
+    {
+      "store_id": "a8bbc136-0000-4000-8000-000000000001",
+      "month": "2026-07",
+      "sha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+    }
+  ],
+  "store": {
+    "id": "a8bbc136-0000-4000-8000-000000000001"
+  }
+}

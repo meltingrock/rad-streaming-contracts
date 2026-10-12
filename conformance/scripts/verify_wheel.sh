@@ -42,6 +42,18 @@ event = {'schema_version': '2.0', 'event_id': 'e0e0e0e0-0000-5000-8000-000000000
                               'format_clock_version': 3, 'timezone': plan['timezone'],
                               'duration_ms': 100, 'timing_rule': 'soft', 'start_offset_ms': None}}}
 assert validate_channel_event(event) == [], validate_channel_event(event)
+from hourplan_conformance import AS_RUN_RECORD_SCHEMA_VERSION
+from hourplan_conformance.as_run_record import validate_as_run_record
+gap = {'record_type': 'gap', 'schema_version': AS_RUN_RECORD_SCHEMA_VERSION,
+       'store': {'id': plan['store_id']}, 'run': {'channel_instance_id': plan['store_id']},
+       'first_seq': 1, 'last_seq': 2, 'dropped_count': 2, 'occurred_at': '2026-10-11T09:12:00.500Z',
+       'dropped_from_at': '2026-10-11T09:01:10.000Z', 'dropped_to_at': '2026-10-11T09:11:58.250Z'}
+assert validate_as_run_record(gap) == [], validate_as_run_record(gap)
+assert any('jingle' in e for e in validate_as_run_record({'record_type': 'header', 'schema_version': '1.0',
+    'export_id': plan['store_id'], 'generated_at': '2026-10-12T06:00:01.250Z', 'service': 'x',
+    'filters': {'families': ['jingle']}, 'range': {'from': '2026-07-01T00:00:00.000Z',
+    'to': '2026-10-01T00:00:00.000Z'}, 'archived_months': []}))
+print('wheel ships the as-run record: a gap validates, its family filter resolves the shared family')
 print('wheel ships schemas: validate_plan + validate_device_event + validate_channel_event callable')
 print('wheel ships v1 schemas: a 1.0 plan validates')
 print('wheel resolves the shared family: FAMILIES exported, a 2.0 channel event validates')

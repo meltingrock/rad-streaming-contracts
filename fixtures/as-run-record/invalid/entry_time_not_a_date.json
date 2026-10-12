@@ -1,0 +1,59 @@
+{
+  "record_type": "entry",
+  "schema_version": "1.0",
+  "id": "6f1c2a3b-4d5e-4f60-8a71-b82c93d4e5f6",
+  "store": {
+    "id": "a8bbc136-0000-4000-8000-000000000001",
+    "code": "ETTW117",
+    "name": "Spar Eastgate",
+    "client": {
+      "id": "4d0bfbf2-0000-4000-8000-000000000002",
+      "code": "SPAR",
+      "name": "Spar"
+    },
+    "account": {
+      "id": "11112222-0000-4000-8000-000000000003",
+      "name": "Spar Gauteng"
+    },
+    "snapshot": "taken"
+  },
+  "item": {
+    "media_id": "ddba5aa2-99ab-4513-9d2a-832e84bf5492",
+    "family": "music",
+    "title": "Weeping",
+    "artist": "Bright Blue",
+    "album_name": "Yesterday Night",
+    "isrc_code": "ZAEMI8700012",
+    "composer": "Dan Heymann",
+    "publisher": "Sheer Publishing",
+    "copyright": "1987 EMI",
+    "code": "MUS-00412",
+    "media_number": "MU00000412",
+    "record_label": "EMI",
+    "arranger": "Bright Blue",
+    "snapshot": "taken"
+  },
+  "placing_schedule": null,
+  "started_at": "2026-10-11T08:00:00.123Z",
+  "ended_at": "2026-10-11T08:03:41.456Z",
+  "flushed_at": "2026-13-45T99:00:00.000Z",
+  "skip_requested_at": null,
+  "silenced_at": null,
+  "elapsed_ms": 221333,
+  "crossfade_ms": 2000,
+  "outcome": "completed",
+  "timezone": "Africa/Johannesburg",
+  "plan": {
+    "hour_bucket": "2026-10-11T08:00:00.000Z",
+    "seq": 0,
+    "timing_rule": "soft",
+    "planned_start_offset_ms": null,
+    "planned_duration_ms": 221500,
+    "schedule_revision": "r-9f2c",
+    "format_clock_version": 3
+  },
+  "run": {
+    "channel_instance_id": "c0ffee00-0000-4000-8000-000000000004",
+    "rid": 17
+  }
+}

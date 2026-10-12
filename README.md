@@ -7,6 +7,9 @@ Canonical, versioned contracts for the per-store streaming platform:
 - **Channel event** (`playout.channel.*`, since 1.3.0): what a store's channel in the
   stream worker actually did. The raw material for the as-run log
   (spec: meltingrock/fck-svc-stream#15).
+- **As-run record** (since 2.1.0): one line of the as-run JSON Lines files, the archive's
+  per-store monthly objects and the export (meltingrock/fck-svc-stream#49). Versioned on its
+  own `schema_version`.
 
 - Spec: `2026-05-29-hourplan-interface-design.md` (in rad-web-controlcenter).
 - Canonical artifact: `schemas/hourplan.schema.json` (JSON Schema draft 2020-12).
@@ -57,7 +60,7 @@ pip install -e ".[dev]"
 pytest -v
 ```
 
-Fixtures live in `fixtures/{hourplan,device-event,channel-event}/{valid,invalid}/` (current
+Fixtures live in `fixtures/{hourplan,device-event,channel-event,as-run-record}/{valid,invalid}/` (current
 major) and `fixtures/v1/{hourplan,channel-event}/` (the 1.3.0 suite, frozen). Both
 this repo and each consumer should run their validator against this suite so all sides agree.
 
@@ -99,6 +102,75 @@ from hourplan_conformance import FAMILIES   # tuple, schema order, current major
 assert set(SegmentFamily) == set(FAMILIES)
 ```
 
+## As-run records
+
+```python
+from hourplan_conformance import AS_RUN_RECORD_SCHEMA_VERSION   # "1.0": what producers write
+from hourplan_conformance.as_run_record import validate_as_run_record
+errors = validate_as_run_record(line_dict)   # [] means valid
+```
+
+Schema: `schemas/as-run-record.schema.json`. Each line of an as-run JSON Lines file is one
+record, picked by `record_type`:
+
+- **`header`**: the first line of an export, and only there. `export_id`, `generated_at`,
+  `service` (our service name, named once per export), `filters` (`store_ids`, `client_ids`,
+  `schedule_codes`, `families`), `range` `{from, to}` (an entry's actual start, from
+  inclusive, to exclusive) and `archived_months` `[{store_id, month, sha256}]`.
+- **`entry`**: one airing, or a pushed item that never aired (`outcome: flushed`). It nests
+  `store`, `item`, `placing_schedule` (null for clock content), `plan` and `run` around the
+  airing's times and outcome. Every key is present: a time or duration that has not happened
+  is `null`.
+- **`gap`**: channel events dropped before they reached the log (`first_seq`, `last_seq`,
+  `dropped_count`, `dropped_from_at`, `dropped_to_at`).
+- **`silence`**: the channel's queue ran dry at `occurred_at`.
+
+Gaps and silences are the log's health records, not airings: their `store` is `{id}` only.
+
+**Times** are UTC ISO 8601 with milliseconds and a `Z` (`2026-10-11T08:00:00.123Z`).
+Durations are integer milliseconds. `timezone` is IANA. No line carries a local time;
+renderers compute it.
+
+**Item fields depend on `family`**, and fields that do not apply are left out, never null.
+Music carries `title`, `artist`, `album_name`, `isrc_code`, `composer`, `publisher`,
+`copyright`, `code`, `media_number`, `record_label`, `arranger`. An advert carries `title`,
+`code` (the creative code), `job_code`, `production_code`, `client` (the store's retailer)
+and `product` (the brand it promotes). Every other family carries `title`, `code`,
+`media_number` and `client`.
+
+**Snapshots.** `store` and `item` each carry `snapshot`: `taken` (the names as they were),
+`pending` (not yet: only the ids are present) or `unavailable` (given up after about a day:
+only the ids, plus `snapshot_reason`). A taken item has a `title`; a taken store has its
+`code`, `name` and `client`, and an `account` when it has one.
+
+**Fields readers misread:**
+
+- **`elapsed_ms`** is media played through, including both crossfades. A natural end reports
+  the full decoded length, a skip reads about 2 s ahead of what went out, and a channel stop
+  uses wall-clock time. It is not the audible time.
+- **`crossfade_ms`** is the configured crossfade, not a measured overlap.
+- **A play**, for royalty returns, is an aired entry with `elapsed_ms` of at least 30 s, or a
+  `completed` item shorter than 30 s. `open`, `unknown` and `flushed` entries never count. It
+  is applied when a return is rendered and never stored on a line
+  (meltingrock/fck-svc-stream#62).
+
+Invariants beyond the schema: A1 an entry ends after it starts; A2 and A3 a gap's seq range
+and time span run forwards; A4 an export's range is non-empty; A5 to A8 an entry's `outcome`
+agrees with its times, as rad-api-schedules derives it (`flushed` never started, `completed`,
+`ended_early` and `skipped` have ended or gone silent, `skipped` was skip-requested, `open`
+has neither ended nor gone silent).
+
+### `schema_version` of an as-run record
+
+`"MAJOR.MINOR"` on every line, versioned apart from the contract's own semver:
+
+- **minor**: adds an optional field. A reader built for `1.0` reading a `1.1` line must accept
+  it, so readers move before producers, as for the HourPlan.
+- **major**: removes, renames or retypes a field.
+- Archived lines are never rewritten. Every major's schema stays published, frozen under
+  `schemas/v<major>/`, for as long as lines with it exist (5 years), and the validator picks the
+  schema by the line's major.
+
 ## 1.3.0 rollout order
 
 1.3.0 adds an optional, nullable `schedule: {id, code}` to HourPlan items (the placing
@@ -123,6 +195,12 @@ channel-event envelope. The package reads both majors.
 
 Adding a family later is a minor release (consumers before the compiler); removing one is
 major.
+
+## 2.1.0
+
+2.1.0 adds the as-run record schema (`as_run_record`, `AS_RUN_RECORD_SCHEMA_VERSION`) and
+changes nothing else, so any 2.0.0 pin can move to it. rad-api-schedules pins it to write the
+archive and the export.
 
 ## Change process
 
