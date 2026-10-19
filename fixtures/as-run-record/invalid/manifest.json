@@ -1,0 +1,182 @@
+{
+  "unknown_record_type.json": {
+    "expect": "record_type"
+  },
+  "entry_missing_ended_at.json": {
+    "expect": "'ended_at' is a required property"
+  },
+  "entry_extra_field.json": {
+    "expect": "surprise"
+  },
+  "entry_unknown_outcome.json": {
+    "expect": "outcome"
+  },
+  "entry_bad_id.json": {
+    "expect": "is not a 'uuid'"
+  },
+  "entry_local_time.json": {
+    "expect": "started_at"
+  },
+  "entry_time_without_ms.json": {
+    "expect": "ended_at"
+  },
+  "entry_time_not_a_date.json": {
+    "expect": "flushed_at"
+  },
+  "music_with_advert_field.json": {
+    "expect": "job_code"
+  },
+  "advert_with_music_field.json": {
+    "expect": "isrc_code"
+  },
+  "sweeper_with_music_field.json": {
+    "expect": "artist"
+  },
+  "item_unknown_field.json": {
+    "expect": "mood"
+  },
+  "item_unlisted_family.json": {
+    "expect": "family"
+  },
+  "family_source_not_other.json": {
+    "expect": "'other' was expected"
+  },
+  "item_missing_media_id.json": {
+    "expect": "'media_id' is a required property"
+  },
+  "advert_client_without_name.json": {
+    "expect": "'name' is a required property"
+  },
+  "pending_item_with_title.json": {
+    "expect": "item/title"
+  },
+  "unavailable_item_without_reason.json": {
+    "expect": "'snapshot_reason' is a required property"
+  },
+  "taken_item_with_reason.json": {
+    "expect": "item/snapshot_reason"
+  },
+  "taken_item_without_title.json": {
+    "expect": "'title' is a required property"
+  },
+  "item_missing_snapshot.json": {
+    "expect": "'snapshot' is a required property"
+  },
+  "store_missing_id.json": {
+    "expect": "'id' is a required property"
+  },
+  "taken_store_without_client.json": {
+    "expect": "'client' is a required property"
+  },
+  "pending_store_with_name.json": {
+    "expect": "store/name"
+  },
+  "store_client_without_code.json": {
+    "expect": "'code' is a required property"
+  },
+  "store_extra_field.json": {
+    "expect": "division"
+  },
+  "unavailable_store_without_reason.json": {
+    "expect": "'snapshot_reason' is a required property"
+  },
+  "schedule_missing_code.json": {
+    "expect": "'code' is a required property"
+  },
+  "schedule_bad_code.json": {
+    "expect": "placing_schedule/code"
+  },
+  "plan_missing_seq.json": {
+    "expect": "'seq' is a required property"
+  },
+  "plan_unknown_timing_rule.json": {
+    "expect": "plan/timing_rule"
+  },
+  "hard_plan_without_offset.json": {
+    "expect": "plan/planned_start_offset_ms"
+  },
+  "soft_plan_with_offset.json": {
+    "expect": "plan/planned_start_offset_ms"
+  },
+  "plan_local_hour_bucket.json": {
+    "expect": "plan/hour_bucket"
+  },
+  "run_missing_rid.json": {
+    "expect": "'rid' is a required property"
+  },
+  "run_bad_channel_instance_id.json": {
+    "expect": "channel_instance_id"
+  },
+  "gap_missing_dropped_count.json": {
+    "expect": "'dropped_count' is a required property"
+  },
+  "gap_with_item.json": {
+    "expect": "item"
+  },
+  "gap_store_with_name.json": {
+    "expect": "name"
+  },
+  "gap_run_with_rid.json": {
+    "expect": "rid"
+  },
+  "silence_with_outcome.json": {
+    "expect": "outcome"
+  },
+  "silence_local_time.json": {
+    "expect": "occurred_at"
+  },
+  "header_missing_service.json": {
+    "expect": "'service' is a required property"
+  },
+  "header_empty_service.json": {
+    "expect": "service"
+  },
+  "header_bad_sha256.json": {
+    "expect": "sha256"
+  },
+  "header_bad_month.json": {
+    "expect": "month"
+  },
+  "header_unknown_filter.json": {
+    "expect": "outcomes"
+  },
+  "header_unlisted_family_filter.json": {
+    "expect": "filters/families/0"
+  },
+  "header_with_store.json": {
+    "expect": "store"
+  },
+  "ended_before_started.json": {
+    "expect": "A1"
+  },
+  "gap_seq_range_reversed.json": {
+    "expect": "A2"
+  },
+  "gap_time_span_reversed.json": {
+    "expect": "A3"
+  },
+  "header_range_reversed.json": {
+    "expect": "A4"
+  },
+  "flushed_but_started.json": {
+    "expect": "A5"
+  },
+  "flushed_without_flushed_at.json": {
+    "expect": "A5"
+  },
+  "completed_without_end.json": {
+    "expect": "A6"
+  },
+  "skipped_without_skip_request.json": {
+    "expect": "A7"
+  },
+  "open_but_ended.json": {
+    "expect": "A8"
+  },
+  "unsupported_major.json": {
+    "expect": "unsupported schema_version major 2"
+  },
+  "version_not_major_minor.json": {
+    "expect": "is not 'major.minor'"
+  }
+}

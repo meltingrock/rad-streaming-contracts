@@ -1,0 +1,1008 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.radioretail.co.za/as-run/1.0/as-run-record.schema.json",
+  "title": "As-run record",
+  "description": "One line of an as-run JSON Lines file (the archive's per-store monthly objects and the export). Added in contract 2.1.0; versioned on its own `schema_version`, independent of the HourPlan's.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "schema_version"
+  ],
+  "properties": {
+    "record_type": {
+      "enum": [
+        "header",
+        "entry",
+        "gap",
+        "silence"
+      ]
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    }
+  },
+  "unevaluatedProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "header"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/header"
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "entry"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/entry"
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "gap"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/gap"
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_type": {
+            "const": "silence"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/silence"
+      }
+    }
+  ],
+  "$defs": {
+    "entry": {
+      "$comment": "One airing (or a pushed item that never aired: outcome flushed). Every key is present; a time or duration that has not happened is null.",
+      "required": [
+        "id",
+        "store",
+        "item",
+        "placing_schedule",
+        "started_at",
+        "ended_at",
+        "flushed_at",
+        "skip_requested_at",
+        "silenced_at",
+        "elapsed_ms",
+        "crossfade_ms",
+        "outcome",
+        "timezone",
+        "plan",
+        "run"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "store": {
+          "$ref": "#/$defs/store"
+        },
+        "item": {
+          "$ref": "#/$defs/item"
+        },
+        "placing_schedule": {
+          "$comment": "The schedule that placed the item (adverts and prerecs), or null for clock content.",
+          "$ref": "https://contracts.radioretail/streaming/2.0/channel-event.schema.json#/$defs/scheduleRef"
+        },
+        "started_at": {
+          "$ref": "#/$defs/utcMsOrNull"
+        },
+        "ended_at": {
+          "$ref": "#/$defs/utcMsOrNull"
+        },
+        "flushed_at": {
+          "$ref": "#/$defs/utcMsOrNull"
+        },
+        "skip_requested_at": {
+          "$ref": "#/$defs/utcMsOrNull"
+        },
+        "silenced_at": {
+          "$ref": "#/$defs/utcMsOrNull"
+        },
+        "elapsed_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "crossfade_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "outcome": {
+          "enum": [
+            "open",
+            "completed",
+            "ended_early",
+            "skipped",
+            "flushed",
+            "unknown"
+          ]
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "plan": {
+          "$ref": "#/$defs/plan"
+        },
+        "run": {
+          "$ref": "#/$defs/run"
+        }
+      }
+    },
+    "utcMs": {
+      "$comment": "UTC, ISO 8601 with milliseconds and a Z: 2026-10-11T08:00:00.123Z. No local times anywhere; renderers compute them from `timezone`.",
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    },
+    "utcMsOrNull": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/utcMs"
+        }
+      ]
+    },
+    "named": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "item": {
+      "$comment": "The aired media, snapshotted from the aired version (`media_id` pins it). Fields that do not apply to the family are omitted, never null. Music carries the royalty fields; an advert its creative code (`code`), job and production codes, the retailer it airs for (`client`) and the brand it promotes (`product`); every other family (radio elements and the rest) its title, codes and `client`.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "media_id",
+        "family",
+        "snapshot"
+      ],
+      "properties": {
+        "media_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "family": {
+          "$ref": "https://contracts.radioretail.co.za/hourplan/2.0/hourplan.schema.json#/$defs/family"
+        },
+        "family_source": {
+          "$ref": "https://contracts.radioretail.co.za/hourplan/2.0/hourplan.schema.json#/$defs/familySource"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "media_number": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artist": {
+          "type": "string",
+          "minLength": 1
+        },
+        "album_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "isrc_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "composer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 1
+        },
+        "copyright": {
+          "type": "string",
+          "minLength": 1
+        },
+        "record_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "arranger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "job_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "production_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "client": {
+          "$ref": "#/$defs/named"
+        },
+        "product": {
+          "$ref": "#/$defs/named"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/snapshotState"
+        },
+        "snapshot_reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "https://contracts.radioretail.co.za/hourplan/2.0/hourplan.schema.json#/$defs/familySourceOnlyWithOther"
+        },
+        {
+          "if": {
+            "properties": {
+              "family": {
+                "const": "music"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "job_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "production_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "product": {
+                "$ref": "#/$defs/absent"
+              },
+              "client": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "family": {
+                "const": "advert"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "artist": {
+                "$ref": "#/$defs/absent"
+              },
+              "album_name": {
+                "$ref": "#/$defs/absent"
+              },
+              "isrc_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "composer": {
+                "$ref": "#/$defs/absent"
+              },
+              "publisher": {
+                "$ref": "#/$defs/absent"
+              },
+              "copyright": {
+                "$ref": "#/$defs/absent"
+              },
+              "record_label": {
+                "$ref": "#/$defs/absent"
+              },
+              "arranger": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "family": {
+                "enum": [
+                  "announcement",
+                  "special",
+                  "promo",
+                  "news",
+                  "weather",
+                  "traffic",
+                  "station_id",
+                  "sweeper",
+                  "presenter_link",
+                  "psa",
+                  "feature",
+                  "sponsorship_bumper",
+                  "other"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "artist": {
+                "$ref": "#/$defs/absent"
+              },
+              "album_name": {
+                "$ref": "#/$defs/absent"
+              },
+              "isrc_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "composer": {
+                "$ref": "#/$defs/absent"
+              },
+              "publisher": {
+                "$ref": "#/$defs/absent"
+              },
+              "copyright": {
+                "$ref": "#/$defs/absent"
+              },
+              "record_label": {
+                "$ref": "#/$defs/absent"
+              },
+              "arranger": {
+                "$ref": "#/$defs/absent"
+              },
+              "job_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "production_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "product": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "snapshot": {
+                "const": "taken"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "title"
+            ],
+            "properties": {
+              "snapshot_reason": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "snapshot": {
+                "const": "pending"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "title": {
+                "$ref": "#/$defs/absent"
+              },
+              "code": {
+                "$ref": "#/$defs/absent"
+              },
+              "media_number": {
+                "$ref": "#/$defs/absent"
+              },
+              "artist": {
+                "$ref": "#/$defs/absent"
+              },
+              "album_name": {
+                "$ref": "#/$defs/absent"
+              },
+              "isrc_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "composer": {
+                "$ref": "#/$defs/absent"
+              },
+              "publisher": {
+                "$ref": "#/$defs/absent"
+              },
+              "copyright": {
+                "$ref": "#/$defs/absent"
+              },
+              "record_label": {
+                "$ref": "#/$defs/absent"
+              },
+              "arranger": {
+                "$ref": "#/$defs/absent"
+              },
+              "job_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "production_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "client": {
+                "$ref": "#/$defs/absent"
+              },
+              "product": {
+                "$ref": "#/$defs/absent"
+              },
+              "snapshot_reason": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "snapshot": {
+                "const": "unavailable"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "snapshot_reason"
+            ],
+            "properties": {
+              "title": {
+                "$ref": "#/$defs/absent"
+              },
+              "code": {
+                "$ref": "#/$defs/absent"
+              },
+              "media_number": {
+                "$ref": "#/$defs/absent"
+              },
+              "artist": {
+                "$ref": "#/$defs/absent"
+              },
+              "album_name": {
+                "$ref": "#/$defs/absent"
+              },
+              "isrc_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "composer": {
+                "$ref": "#/$defs/absent"
+              },
+              "publisher": {
+                "$ref": "#/$defs/absent"
+              },
+              "copyright": {
+                "$ref": "#/$defs/absent"
+              },
+              "record_label": {
+                "$ref": "#/$defs/absent"
+              },
+              "arranger": {
+                "$ref": "#/$defs/absent"
+              },
+              "job_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "production_code": {
+                "$ref": "#/$defs/absent"
+              },
+              "client": {
+                "$ref": "#/$defs/absent"
+              },
+              "product": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "absent": {
+      "$comment": "This field does not apply to the item's family: leave it out.",
+      "not": {}
+    },
+    "snapshotState": {
+      "$comment": "taken: the fields were copied when the entry was written or later by the filler. pending: not yet; the filler retries for about 24 hours. unavailable: the filler gave up, and `snapshot_reason` says why.",
+      "enum": [
+        "taken",
+        "pending",
+        "unavailable"
+      ]
+    },
+    "store": {
+      "$comment": "The store the entry aired in, snapshotted from rad-api-clients: names as they were then. Its client is the retailer. No account when the store has none.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "snapshot"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "client": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "code",
+            "name"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "account": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "name"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "snapshot": {
+          "$ref": "#/$defs/snapshotState"
+        },
+        "snapshot_reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "snapshot": {
+                "const": "taken"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "code",
+              "name",
+              "client"
+            ],
+            "properties": {
+              "snapshot_reason": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "snapshot": {
+                "const": "pending"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "code": {
+                "$ref": "#/$defs/absent"
+              },
+              "name": {
+                "$ref": "#/$defs/absent"
+              },
+              "client": {
+                "$ref": "#/$defs/absent"
+              },
+              "account": {
+                "$ref": "#/$defs/absent"
+              },
+              "snapshot_reason": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "snapshot": {
+                "const": "unavailable"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "snapshot_reason"
+            ],
+            "properties": {
+              "code": {
+                "$ref": "#/$defs/absent"
+              },
+              "name": {
+                "$ref": "#/$defs/absent"
+              },
+              "client": {
+                "$ref": "#/$defs/absent"
+              },
+              "account": {
+                "$ref": "#/$defs/absent"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "plan": {
+      "$comment": "Where the HourPlan put the item: its hour (UTC), position and planned timing, and the plan revision it came from.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hour_bucket",
+        "seq",
+        "timing_rule",
+        "planned_start_offset_ms",
+        "planned_duration_ms",
+        "schedule_revision",
+        "format_clock_version"
+      ],
+      "properties": {
+        "hour_bucket": {
+          "$ref": "#/$defs/utcMs"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "timing_rule": {
+          "enum": [
+            "soft",
+            "hard"
+          ]
+        },
+        "planned_start_offset_ms": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3599999
+            }
+          ]
+        },
+        "planned_duration_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schedule_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "format_clock_version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "timing_rule": {
+                "const": "hard"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "planned_start_offset_ms": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3599999
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "timing_rule": {
+                "const": "soft"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "planned_start_offset_ms": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "run": {
+      "$comment": "The channel run that aired it. channel_instance_id is new each time a store's channel is created; rid is Liquidsoap's request id, unique only within that run.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "channel_instance_id",
+        "rid"
+      ],
+      "properties": {
+        "channel_instance_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "rid": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "storeRef": {
+      "$comment": "Gaps and silences are the log's health records, not airings: no store snapshot.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "channelRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "channel_instance_id"
+      ],
+      "properties": {
+        "channel_instance_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "gap": {
+      "$comment": "Channel events the stream worker dropped before they reached the as-run log: the entries they would have made are missing for that span.",
+      "required": [
+        "store",
+        "run",
+        "first_seq",
+        "last_seq",
+        "dropped_count",
+        "occurred_at",
+        "dropped_from_at",
+        "dropped_to_at"
+      ],
+      "properties": {
+        "store": {
+          "$ref": "#/$defs/storeRef"
+        },
+        "run": {
+          "$ref": "#/$defs/channelRun"
+        },
+        "first_seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "occurred_at": {
+          "$ref": "#/$defs/utcMs"
+        },
+        "dropped_from_at": {
+          "$ref": "#/$defs/utcMs"
+        },
+        "dropped_to_at": {
+          "$ref": "#/$defs/utcMs"
+        }
+      }
+    },
+    "silence": {
+      "$comment": "The channel's queue ran dry: nothing was on air from occurred_at until the next entry starts.",
+      "required": [
+        "store",
+        "run",
+        "occurred_at"
+      ],
+      "properties": {
+        "store": {
+          "$ref": "#/$defs/storeRef"
+        },
+        "run": {
+          "$ref": "#/$defs/channelRun"
+        },
+        "occurred_at": {
+          "$ref": "#/$defs/utcMs"
+        }
+      }
+    },
+    "header": {
+      "$comment": "The first line of an export, and only there. `service` is our service name (a required config value), named once per export rather than on every entry. `range` filters on an entry's actual start, from inclusive, to exclusive. `archived_months` lists each archived object the export read, checksum-verified.",
+      "required": [
+        "export_id",
+        "generated_at",
+        "service",
+        "filters",
+        "range",
+        "archived_months"
+      ],
+      "properties": {
+        "export_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "generated_at": {
+          "$ref": "#/$defs/utcMs"
+        },
+        "service": {
+          "type": "string",
+          "minLength": 1
+        },
+        "filters": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "store_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "client_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "schedule_codes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z]+-[0-9]+$"
+              }
+            },
+            "families": {
+              "type": "array",
+              "items": {
+                "$ref": "https://contracts.radioretail.co.za/hourplan/2.0/hourplan.schema.json#/$defs/family"
+              }
+            }
+          }
+        },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "from",
+            "to"
+          ],
+          "properties": {
+            "from": {
+              "$ref": "#/$defs/utcMs"
+            },
+            "to": {
+              "$ref": "#/$defs/utcMs"
+            }
+          }
+        },
+        "archived_months": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "store_id",
+              "month",
+              "sha256"
+            ],
+            "properties": {
+              "store_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "month": {
+                "type": "string",
+                "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

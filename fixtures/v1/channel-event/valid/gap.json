@@ -1,0 +1,16 @@
+{
+  "event_id": "e0e0e0e0-0000-5000-8000-000000000040",
+  "event_type": "playout.channel.gap",
+  "timestamp": "2026-09-21T13:15:02.105Z",
+  "payload": {
+    "store_id": "f1e2d3c4-0000-4000-8000-000000000001",
+    "channel_instance_id": "c0c0c0c0-0000-4000-8000-000000000001",
+    "seq": 40,
+    "occurred_at": "2026-09-21T15:02:11.000Z",
+    "dropped_count": 24,
+    "first_seq": 16,
+    "last_seq": 39,
+    "dropped_from_at": "2026-09-21T13:20:01.000Z",
+    "dropped_to_at": "2026-09-21T14:58:30.250Z"
+  }
+}

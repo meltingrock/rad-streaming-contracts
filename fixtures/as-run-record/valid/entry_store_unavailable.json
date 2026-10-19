@@ -1,0 +1,45 @@
+{
+  "record_type": "entry",
+  "schema_version": "1.0",
+  "id": "3a8d9ca1-b4c5-46d7-81e8-2f9a04b5c637",
+  "store": {
+    "id": "a8bbc136-0000-4000-8000-000000000001",
+    "snapshot": "unavailable",
+    "snapshot_reason": "rad-api-clients has no store with this id"
+  },
+  "item": {
+    "media_id": "fd8fbec2-8ac1-46fe-aad1-0776bc382b3f",
+    "family": "sweeper",
+    "title": "E2E Streaming Harness sweeper 1",
+    "code": "SWP-00077",
+    "media_number": "SW00000078",
+    "client": {
+      "id": "dd9e17a2-189a-44f2-8edf-4d1d2e7da26f",
+      "name": "E2E Streaming Harness"
+    },
+    "snapshot": "taken"
+  },
+  "placing_schedule": null,
+  "started_at": "2026-10-11T08:04:00.000Z",
+  "ended_at": "2026-10-11T08:04:05.042Z",
+  "flushed_at": null,
+  "skip_requested_at": null,
+  "silenced_at": null,
+  "elapsed_ms": 5042,
+  "crossfade_ms": 2000,
+  "outcome": "completed",
+  "timezone": "Africa/Johannesburg",
+  "plan": {
+    "hour_bucket": "2026-10-11T08:00:00.000Z",
+    "seq": 2,
+    "timing_rule": "soft",
+    "planned_start_offset_ms": null,
+    "planned_duration_ms": 8045,
+    "schedule_revision": "r-9f2c",
+    "format_clock_version": 3
+  },
+  "run": {
+    "channel_instance_id": "c0ffee00-0000-4000-8000-000000000004",
+    "rid": 17
+  }
+}

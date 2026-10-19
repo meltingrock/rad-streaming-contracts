@@ -1,0 +1,13 @@
+{
+  "record_type": "header",
+  "schema_version": "1.0",
+  "export_id": "6d1acfd4-e7f8-49a0-b41b-5c2d37e8f960",
+  "generated_at": "2026-10-12T06:00:01.250Z",
+  "service": "Radio Retail in-store radio",
+  "filters": {},
+  "range": {
+    "from": "2026-07-01T00:00:00.000Z",
+    "to": "2026-10-01T00:00:00.000Z"
+  },
+  "archived_months": []
+}

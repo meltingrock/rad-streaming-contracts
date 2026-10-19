@@ -1,0 +1,48 @@
+{
+  "record_type": "entry",
+  "schema_version": "1.0",
+  "id": "0d5a6f7e-8192-43a4-9eb5-fc6d71829304",
+  "store": {
+    "id": "a8bbc136-0000-4000-8000-000000000001",
+    "code": "ETTW117",
+    "name": "Spar Eastgate",
+    "client": {
+      "id": "4d0bfbf2-0000-4000-8000-000000000002",
+      "code": "SPAR",
+      "name": "Spar"
+    },
+    "account": {
+      "id": "11112222-0000-4000-8000-000000000003",
+      "name": "Spar Gauteng"
+    },
+    "snapshot": "taken"
+  },
+  "item": {
+    "media_id": "28684fc0-ca20-42e6-9b75-f85451dd580f",
+    "family": "music",
+    "snapshot": "pending"
+  },
+  "placing_schedule": null,
+  "started_at": "2026-10-11T08:03:41.457Z",
+  "ended_at": null,
+  "flushed_at": null,
+  "skip_requested_at": null,
+  "silenced_at": null,
+  "elapsed_ms": null,
+  "crossfade_ms": 2000,
+  "outcome": "open",
+  "timezone": "Africa/Johannesburg",
+  "plan": {
+    "hour_bucket": "2026-10-11T08:00:00.000Z",
+    "seq": 1,
+    "timing_rule": "soft",
+    "planned_start_offset_ms": null,
+    "planned_duration_ms": 221500,
+    "schedule_revision": "r-9f2c",
+    "format_clock_version": 3
+  },
+  "run": {
+    "channel_instance_id": "c0ffee00-0000-4000-8000-000000000004",
+    "rid": 18
+  }
+}

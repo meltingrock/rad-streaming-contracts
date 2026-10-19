@@ -1,0 +1,62 @@
+{
+  "record_type": "entry",
+  "schema_version": "1.0",
+  "id": "7a2d3c4b-5e6f-4071-8b82-c93da4e5f607",
+  "store": {
+    "id": "a8bbc136-0000-4000-8000-000000000001",
+    "code": "ETTW117",
+    "name": "Spar Eastgate",
+    "client": {
+      "id": "4d0bfbf2-0000-4000-8000-000000000002",
+      "code": "SPAR",
+      "name": "Spar"
+    },
+    "account": {
+      "id": "11112222-0000-4000-8000-000000000003",
+      "name": "Spar Gauteng"
+    },
+    "snapshot": "taken"
+  },
+  "item": {
+    "media_id": "9b8a7c6d-0000-4000-8000-000000000010",
+    "family": "advert",
+    "title": "Spar Freshline Week",
+    "code": "ANN-00231",
+    "job_code": "JOB-1182",
+    "production_code": "PRD-0457",
+    "client": {
+      "id": "4d0bfbf2-0000-4000-8000-000000000002"
+    },
+    "product": {
+      "id": "5e1c0d2a-0000-4000-8000-000000000011",
+      "name": "Freshline"
+    },
+    "snapshot": "taken"
+  },
+  "placing_schedule": {
+    "id": "3c2b1a09-0000-4000-8000-000000000012",
+    "code": "SCH-00881"
+  },
+  "started_at": "2026-10-11T08:15:00.000Z",
+  "ended_at": "2026-10-11T08:15:30.021Z",
+  "flushed_at": null,
+  "skip_requested_at": null,
+  "silenced_at": null,
+  "elapsed_ms": 30021,
+  "crossfade_ms": 2000,
+  "outcome": "completed",
+  "timezone": "Africa/Johannesburg",
+  "plan": {
+    "hour_bucket": "2026-10-11T08:00:00.000Z",
+    "seq": 5,
+    "timing_rule": "hard",
+    "planned_start_offset_ms": 900000,
+    "planned_duration_ms": 30000,
+    "schedule_revision": "r-9f2c",
+    "format_clock_version": 3
+  },
+  "run": {
+    "channel_instance_id": "c0ffee00-0000-4000-8000-000000000004",
+    "rid": 22
+  }
+}
