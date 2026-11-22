@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "event_id": "56565656-0000-4000-8000-000000000006",
+  "event_type": "streams.store.health_changed",
+  "timestamp": "2026-11-23T17:00:00Z",
+  "payload": {
+    "store_id": "a1a1a1a1-1111-4111-8111-111111111111",
+    "state": "closed",
+    "previous_state": "problem",
+    "since": "2026-11-23T17:00:00Z",
+    "occurred_at": "2026-11-23T17:00:00Z",
+    "alert": false
+  }
+}

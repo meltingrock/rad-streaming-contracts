@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "event_id": "52525252-0000-4000-8000-000000000002",
+  "event_type": "streams.store.health_changed",
+  "timestamp": "2026-11-23T09:05:00Z",
+  "payload": {
+    "store_id": "a1a1a1a1-1111-4111-8111-111111111111",
+    "state": "off_air",
+    "previous_state": "live",
+    "since": "2026-11-23T09:06:00Z",
+    "occurred_at": "2026-11-23T09:05:00Z",
+    "alert": true
+  }
+}

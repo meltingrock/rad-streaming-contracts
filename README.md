@@ -10,6 +10,9 @@ Canonical, versioned contracts for the per-store streaming platform:
 - **As-run record** (since 2.1.0): one line of the as-run JSON Lines files, the archive's
   per-store monthly objects and the export (meltingrock/fck-svc-stream#49). Versioned on its
   own `schema_version`.
+- **Store health event** (`streams.store.health_changed`, since 2.2.0): a streaming store's
+  health as a manager sees it, and whether it should alert them
+  (meltingrock/rad-streaming-contracts#6). Versioned on its own `schema_version`.
 
 - Spec: `2026-05-29-hourplan-interface-design.md` (in rad-web-controlcenter).
 - Canonical artifact: `schemas/hourplan.schema.json` (JSON Schema draft 2020-12).
@@ -60,7 +63,7 @@ pip install -e ".[dev]"
 pytest -v
 ```
 
-Fixtures live in `fixtures/{hourplan,device-event,channel-event,as-run-record}/{valid,invalid}/` (current
+Fixtures live in `fixtures/{hourplan,device-event,channel-event,as-run-record,store-health-event}/{valid,invalid}/` (current
 major) and `fixtures/v1/{hourplan,channel-event}/` (the 1.3.0 suite, frozen). Both
 this repo and each consumer should run their validator against this suite so all sides agree.
 
@@ -170,6 +173,60 @@ has neither ended nor gone silent).
 - Archived lines are never rewritten. Every major's schema stays published, frozen under
   `schemas/v<major>/`, for as long as lines with it exist (5 years), and the validator picks the
   schema by the line's major.
+
+## Store health events
+
+```python
+from hourplan_conformance import STORE_HEALTH_EVENT_SCHEMA_VERSION   # "1.0": what producers write
+from hourplan_conformance.store_health_event import STATES, validate_store_health_event
+errors = validate_store_health_event(event_dict)   # [] means valid
+```
+
+Schema: `schemas/store-health-event.schema.json`. fck-web-stream's store health watcher
+publishes it on the topic exchange `streams.device.*` goes to (its `STREAMS_EVENTS_EXCHANGE`), with routing
+key `streams.store.health_changed`. rad-api-notifications consumes it and sends the push alert.
+
+```json
+{"schema_version": "1.0", "event_id": "<uuid>", "event_type": "streams.store.health_changed",
+ "timestamp": "2026-11-23T09:05:00Z",
+ "payload": {"store_id": "<uuid>", "state": "off_air", "previous_state": "live",
+             "since": "2026-11-23T09:00:00Z", "occurred_at": "2026-11-23T09:05:00Z",
+             "alert": true}}
+```
+
+**`state`** uses the app's rule (rad-mob-admin `live-status.ts`): `closed` by store hours wins
+over everything; otherwise `live`, `off_air` (the stream is idle: no player holds the store) or
+`problem` (degraded or down). A closed store is never `off_air`.
+
+**Two kinds of event, one shape.** The watcher publishes every change as it sees it, with
+`alert: false` and `occurred_at` equal to `since`. When a change should notify, it publishes the
+same state again with `alert: true`, the same `since` and a later `occurred_at` (an outage
+alerts once it has held 5 minutes). So `previous_state` is always the state `state` replaced at
+`since`, never `state` itself, and null only on the watcher's first sight of a store.
+
+**`alert`** carries every timing rule (hold 5 minutes, one alert per outage, a new outage only
+after 10 minutes live, back on air only after an outage that alerted;
+meltingrock/fck-web-stream#16). A consumer notifies on `alert: true` and ignores the rest; it
+must not apply rules of its own. A `closed` event never alerts.
+
+`event_id` is unique per message and is what consumers dedupe on. `timestamp` is publish time.
+
+Invariants beyond the schema: H1 `since` is not after `occurred_at`; H2 `previous_state` is not
+`state`.
+
+`schema_version` follows the as-run record's rule: a minor adds an optional field or a state and
+a reader accepts any minor of its major, so readers move first; a major removes, renames or
+retypes one.
+
+## 2.2.0 rollout order
+
+2.2.0 adds the store health event and changes nothing else.
+
+1. rad-api-notifications pins 2.2.0, binds `streams.store.health_changed` and validates it
+   **first** (meltingrock/rad-api-notifications#16). Nothing is emitted yet.
+2. Only then does fck-web-stream's watcher publish it (meltingrock/fck-web-stream#16).
+   fck-web-stream pins 1.1.1 today; the device event it publishes is unchanged since then, so
+   moving it to 2.2.0 changes nothing it sends.
 
 ## 1.3.0 rollout order
 
