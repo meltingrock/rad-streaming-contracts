@@ -53,6 +53,16 @@ assert any('jingle' in e for e in validate_as_run_record({'record_type': 'header
     'export_id': plan['store_id'], 'generated_at': '2026-10-12T06:00:01.250Z', 'service': 'x',
     'filters': {'families': ['jingle']}, 'range': {'from': '2026-07-01T00:00:00.000Z',
     'to': '2026-10-01T00:00:00.000Z'}, 'archived_months': []}))
+from hourplan_conformance import STORE_HEALTH_EVENT_SCHEMA_VERSION
+from hourplan_conformance.store_health_event import STATES, validate_store_health_event
+health = {'schema_version': STORE_HEALTH_EVENT_SCHEMA_VERSION, 'event_id': plan['store_id'],
+          'event_type': 'streams.store.health_changed', 'timestamp': '2026-11-23T09:05:00Z',
+          'payload': {'store_id': plan['store_id'], 'state': 'off_air', 'previous_state': 'live',
+                      'since': '2026-11-23T09:00:00Z', 'occurred_at': '2026-11-23T09:05:00Z',
+                      'alert': True}}
+assert validate_store_health_event(health) == [], validate_store_health_event(health)
+assert STATES == ('live', 'off_air', 'problem', 'closed'), STATES
+print('wheel ships the store health event: an off-air alert validates')
 print('wheel ships the as-run record: a gap validates, its family filter resolves the shared family')
 print('wheel ships schemas: validate_plan + validate_device_event + validate_channel_event callable')
 print('wheel ships v1 schemas: a 1.0 plan validates')

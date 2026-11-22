@@ -1,0 +1,53 @@
+{
+  "missing_schema_version.json": {
+    "expect": "is not 'major.minor'"
+  },
+  "unknown_major.json": {
+    "expect": "unsupported schema_version major 2"
+  },
+  "unknown_event_type.json": {
+    "expect": "event_type"
+  },
+  "missing_store_id.json": {
+    "expect": "'store_id' is a required property"
+  },
+  "missing_since.json": {
+    "expect": "'since' is a required property"
+  },
+  "missing_alert.json": {
+    "expect": "'alert' is a required property"
+  },
+  "missing_previous_state.json": {
+    "expect": "'previous_state' is a required property"
+  },
+  "unknown_state.json": {
+    "expect": "'degraded' is not one of"
+  },
+  "unknown_previous_state.json": {
+    "expect": "previous_state"
+  },
+  "alert_not_boolean.json": {
+    "expect": "is not of type 'boolean'"
+  },
+  "bad_store_id.json": {
+    "expect": "is not a 'uuid'"
+  },
+  "bad_since.json": {
+    "expect": "is not a 'date-time'"
+  },
+  "extra_payload_field.json": {
+    "expect": "Additional properties"
+  },
+  "extra_envelope_field.json": {
+    "expect": "Additional properties"
+  },
+  "closed_alert.json": {
+    "expect": "payload/alert"
+  },
+  "since_after_occurred_at.json": {
+    "expect": "H1:"
+  },
+  "state_unchanged.json": {
+    "expect": "H2:"
+  }
+}
