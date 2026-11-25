@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.radioretail.co.za/streaming/store-health-event/1.0/store-health-event.schema.json",
+  "title": "Store health event",
+  "description": "streams.store.health_changed: a streaming store's health as a manager sees it (closed by hours wins, then live, off air or problem). Published by fck-web-stream's store health watcher, consumed by rad-api-notifications. Added in contract 2.2.0; versioned on its own `schema_version`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "event_type", "timestamp", "payload"],
+  "properties": {
+    "schema_version": {
+      "description": "MAJOR.MINOR of this event's own schema. A reader accepts any minor of a major it reads.",
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "event_id": {
+      "description": "Unique per message; consumers dedupe on it.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "event_type": { "const": "streams.store.health_changed" },
+    "timestamp": {
+      "description": "Publish time. Not when the state began (`payload.since`).",
+      "type": "string",
+      "format": "date-time"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["store_id", "state", "previous_state", "since", "occurred_at", "alert"],
+      "properties": {
+        "store_id": { "type": "string", "format": "uuid" },
+        "state": {
+          "description": "live: audio is going out. off_air: open by store hours, but no player holds the store (stream idle). problem: open and the stream is degraded or down. closed: outside store hours, whatever the stream does.",
+          "$ref": "#/$defs/state"
+        },
+        "previous_state": {
+          "description": "The state `state` replaced at `since`; never equal to `state`. Null when nothing is known before it (the watcher's first sight of the store).",
+          "oneOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
+        },
+        "since": {
+          "description": "When `state` began.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "occurred_at": {
+          "description": "When the watcher decided this event. Equal to `since` for the change itself; later for an alert that waited for a state to hold.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "alert": {
+          "description": "True when a manager should be notified of this event. The watcher applies every timing rule, so a consumer notifies on true and does nothing on false.",
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "description": "A closed store never alerts.",
+      "if": { "properties": { "payload": { "properties": { "state": { "const": "closed" } } } } },
+      "then": { "properties": { "payload": { "properties": { "alert": { "const": false } } } } }
+    }
+  ],
+  "$defs": {
+    "state": { "enum": ["live", "off_air", "problem", "closed"] }
+  }
+}
